@@ -2,10 +2,11 @@
 
 ## Enriquecimientos 
 
-`Un análisis de enriquecimiento funcional suele aplicarse para extraer información biológica relevante ya sea de una lista filtrada de genes relevantes.` El ejemplo más conocido de esta lista podría ser los genes diferencialmente expresados resultado de un análisis de Expresión diferencial.
+`Un análisis de enriquecimiento funcional suele aplicarse para extraer información biológica relevante, ya sea de una lista filtrada de genes relevantes o bien de todo el genoma evaluado por un valor estadístico.` El ejemplo más conocido de esta lista podría ser la lista filtrada de genes diferencialmente expresados (por algún punto de corte de logFold Change) o bien la lista de todos los genes estimado por su valor de logFold Change.
 
 Si bien hay varios métodos para hacer enriquecimiento[^1], los dós métodos más comunes son el Análisis de sobrerepresentación (*Over-representation analysis* o ORA) y el Análisis de Enriquecimiento de Conjuntos de Genes (*Gene Set Enrichment Analysis* o GSEA). Ambos incluidos en `clusterProfiler`.
 
+[^1]: Para más detalles ver: [Gómez-Romero, *et al.* (**2021**) "Bioinformatics of Functional Categories Enrichment" in *Bioinformatics and Human Genomics Research* eBook ISBN: 9781003005926](https://www.taylorfrancis.com/chapters/edit/10.1201/9781003005926-14/bioinformatics-functional-categories-enrichment-laura-g%C3%B3mez-romero-hugo-tovar-enrique-hern%C3%A1ndez-lemus).
 
 | Análisis | Lo que require de entrada | Como luce la salida |  ✅ Pros | ⚠️ Cons |
 | -------- | :-----------------------: | :-----------------: | :-----: | :-----: |
@@ -243,14 +244,15 @@ Parámetros:
 #BiocManager::install("pathview")
 library(pathview)
 
-# Produce the native KEGG plot (PNG)
+# Produce una gráfica de KEGG (PNG)
 hsa <- pathview(gene.data=gene_list, pathway.id="hsa04740", species = "hsa", gene.idtype=gene.idtype.list[3])
 
-# Produce a different plot (PDF) (not displayed here)
+# Produce una gráfica diferente (PDF)
 hsa <- pathview(gene.data=gene_list, pathway.id="hsa04744", species = "hsa", gene.idtype=gene.idtype.list[3], kegg.native = FALSE)
 ```
 
 Las imágenes se salvan en su directorio de trabajo.
 
 
-[^1]: Para más detalles ver: [Gómez-Romero, *et al.* (**2021**) "Bioinformatics of Functional Categories Enrichment" in *Bioinformatics and Human Genomics Research* eBook ISBN: 9781003005926](https://www.taylorfrancis.com/chapters/edit/10.1201/9781003005926-14/bioinformatics-functional-categories-enrichment-laura-g%C3%B3mez-romero-hugo-tovar-enrique-hern%C3%A1ndez-lemus).
+
+
