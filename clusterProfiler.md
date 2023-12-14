@@ -345,7 +345,7 @@ Agrupados por pathways, se generan gráficos de densidad utilizando la frecuenci
 ridgeplot(gse) + labs(x = "enrichment distribution")
 ```
 
-## GSEA Plot  
+### GSEA Plot  
 
 Método tradicional para visualizar resultados de GSEA.  
   
@@ -472,6 +472,8 @@ hsa <- pathview(gene.data=gene_list, pathway.id="hsa05322", species = "hsa", gen
 
 Las imágenes se salvan en su directorio de trabajo.
 
+
+Más información sobre clusterProfiler en su sitio web https://bioconductor.org/packages/release/bioc/vignettes/clusterProfiler/inst/doc/clusterProfiler.html
 
 
 
