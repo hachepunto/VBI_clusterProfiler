@@ -13,7 +13,18 @@ Este material:
 ![clusterProfiler](https://ars.els-cdn.com/content/image/1-s2.0-S2666675821000667-fx1_lrg.jpg)
 
 
+### Installation
 
+To install this package, start R (version "4.3") and enter:
+
+```r
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("clusterProfiler")
+```
+
+For older versions of R, please refer to the appropriate [Bioconductor release](https://bioconductor.org/about/release-announcements/).
 
 
 Citation (from within R, enter `citation("clusterProfiler")`):
