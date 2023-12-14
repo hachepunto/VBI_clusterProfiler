@@ -34,6 +34,8 @@ https://maayanlab.cloud/Enrichr/
 
 ### Entonces ¿Para qué queremos clusterProfiler?
 
+# Over-representation analysis
+
 ## GO *Over-representation analysis* con `clusterProfiler`
 
 ### Instalar y cargar paquetes
@@ -152,7 +154,7 @@ El otro parámetro `toType` en la función `bitr` también debe ser otra de las 
 
 Como nuestra entrada inicial usaremos nuestra `original_gene_list` que creamos para el enriquecimiento en GO.
 
-## Prepare Data
+### Prepare Data
 
 ```r
 # Convertimos los gene IDs para la función enrichKEGG
@@ -197,7 +199,7 @@ kegg_genes <- na.omit(kegg_genes)
 kegg_genes <- names(kegg_genes)[abs(kegg_genes) > 2]
 
 ```
-## Creamos el objeto `enrichKEGG`
+### Creamos el objeto `enrichKEGG`
 
 Parámetros:
 
@@ -252,6 +254,113 @@ hsa <- pathview(gene.data=gene_list, pathway.id="hsa04744", species = "hsa", gen
 ```
 
 Las imágenes se salvan en su directorio de trabajo.
+
+
+# Gene Set Enrichment Analysis
+
+## GO *Gene Set Enrichment Analysis* con `clusterProfiler`
+
+### Install and load required packages
+```r
+#BiocManager::install("clusterProfiler")
+#BiocManager::install("pathview")
+#BiocManager::install("enrichplot")
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+```
+
+### Anotación
+Vamos a usar, de nuevo, los genes diferencialmente expresados del este *lindo* trabajo [*The regulatory landscape of retinoblastoma: a pathway analysis perspective*](https://doi.org/10.6084/m9.figshare.c.5975228). Por lo que usaremos la anotación de humano "org.Hs.eg.db" de nuevo. Recuerden que la lista completa está [aquí](http://bioconductor.org/packages/release/BiocViews.html#___OrgDb).
+
+```r
+#BiocManager::install("org.Hs.eg.db", character.only = TRUE)
+library("org.Hs.eg.db", character.only = TRUE)
+```
+
+### Prepare Input
+```r
+# Lectura de la tabla de genes diferencialemente expresados
+degs = readRDS("data/degs.RDS")
+
+# necesitamos el log2 fold change 
+original_gene_list <- degs$logFC
+
+# Nombramos el vector
+names(original_gene_list) <- degs$ESGN
+
+# eliminamos cualquier NA 
+gene_list<-na.omit(original_gene_list)
+
+# odernamos la lista en orden decreciente (requerido por clusterProfiler)
+gene_list = sort(gene_list, decreasing = TRUE)
+```
+
+### Gene Set Enrichment
+
+Parámetros:
+
+**keyType** Igual que en el ORA, el tipo de ids utilizados en nuestra lista. Receurden que los tipos permitidos se enlistan con el comado `keytypes("org.Hs.eg.db")`. Recueden que si usan algo distinto a Humano deben cambiar su anotación.   
+**ont** alguno de "BP" (procesos biológicos), "MF" (función molecular), "CC" (componente celular) o "ALL" (todas)  
+**nPerm** Número de permutaciones. Entre más permutaciones se hagan, más preciso es el resultado, pero el proceso tomará más tiempo de cómputo.  
+**minGSSize** tamaño mínimo de geneSet para analizar.   
+**maxGSSize** tamaño máximo de genes anotados para probar. 
+**pvalueCutoff** punto de corte del p-value.   
+**pAdjustMethod** metodo para ajustar la p, puede ser uno de estos: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none" 
+
+
+```r
+gse <- gseGO(geneList=gene_list, 
+             ont ="ALL", 
+             keyType = "ENSEMBL", 
+             minGSSize = 3, 
+             maxGSSize = 800, 
+             pvalueCutoff = 0.05, 
+             verbose = TRUE, 
+             OrgDb = "org.Hs.eg.db", 
+             pAdjustMethod = "fdr")
+```
+Noten que hemos dado toda la lista de genes con su valor de lofFC. Estás enriqueciendo sin un criterio arbitrario, **puro dato duro y maduro**.
+
+## Outputs
+
+### Tabla de resultados
+```r
+head(gse)
+```
+
+### Dotplot
+```r
+#BiocManager::install("DOSE")
+require(DOSE)
+dotplot(gse, showCategory=10, split=".sign") + facet_grid(.~.sign)
+```
+
+### Ridgeplot
+
+Agrupados por pathways, se generan gráficos de densidad utilizando la frecuencia del logFold Change por gen dentro de cada set. Útil para interpretar vías reguladas al alza o a la baja.
+
+```r
+ridgeplot(gse) + labs(x = "enrichment distribution")
+```
+
+## GSEA Plot  
+
+Método tradicional para visualizar resultados de GSEA.  
+  
+Parámetros:
+
+**GeneSetID** Entero. Corresponde al pathway en el objeto 'gse'. El primero pathway es el 1, el segundo el 2, *etc*. 
+
+```r
+# Usamos el objeto 'geneset' para que siempre coincidan el título y el gene set correspondiente.
+geneset = 1
+gseaplot(gse, by = "all", title = gse$Description[geneset], geneSetID = geneset)
+```
+
+
+
+
 
 
 
