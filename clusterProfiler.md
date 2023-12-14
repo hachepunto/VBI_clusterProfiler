@@ -23,7 +23,7 @@ Si bien hay varios métodos para hacer enriquecimiento[^1], los dós métodos m�
 
 [Video sobre GSEA](https://youtu.be/bT00oJh2x_4)
 
-![GSEA](https://www.pnas.org/cms/10.1073/pnas.0506580102/asset/c5e213a9-4247-4506-bae4-908054152f97/assets/graphic/zpq0370595180001.jpeg "Gene Set Enrichment Analysis")
+![GSEA](images/gsea.png "Gene Set Enrichment Analysis")
 
 ### Enrichr
 
