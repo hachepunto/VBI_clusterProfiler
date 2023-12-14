@@ -10,8 +10,6 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-data
-results
 
 *.DS_Store
 .AppleDouble

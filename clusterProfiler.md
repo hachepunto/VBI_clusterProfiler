@@ -2,7 +2,7 @@
 
 ## Enriquecimientos 
 
-Un análisis de enriquecimiento funcional suele aplicarse para extraer información biológica relevante ya sea de una lista filtrada de genes relevantes. El ejemplo más conocido de esta lista podría ser los genes diferencialmente expresados resultado de un análisis de Expresión diferencial.
+`Un análisis de enriquecimiento funcional suele aplicarse para extraer información biológica relevante ya sea de una lista filtrada de genes relevantes.` El ejemplo más conocido de esta lista podría ser los genes diferencialmente expresados resultado de un análisis de Expresión diferencial.
 
 Si bien hay varios métodos para hacer enriquecimiento[^1], los dós métodos más comunes son el Análisis de sobrerepresentación (*Over-representation analysis* o ORA) y el Análisis de Enriquecimiento de Conjuntos de Genes (*Gene Set Enrichment Analysis* o GSEA). Ambos incluidos en `clusterProfiler`.
 
@@ -35,7 +35,7 @@ https://maayanlab.cloud/Enrichr/
 
 ## GO *Over-representation analysis* con `clusterProfiler`
 
-### Install and load packages
+### Instalar y cargar paquetes
 ```r
 #BiocManager::install("clusterProfiler")
 #BiocManager::install("pathview")
@@ -43,15 +43,15 @@ library(clusterProfiler)
 library(tidyverse)
 ```
 
-### Annotations
-Vamos a usar los genes diferencialmente expresados del trabajo [*The regulatory landscape of retinoblastoma: a pathway analysis perspective*](https://doi.org/10.6084/m9.figshare.c.597522), por lo que usaremos la anotación de humano "org.Hs.eg.db" below. Puedes ver las anotaciones disponibles [aquí](http://bioconductor.org/packages/release/BiocViews.html#___OrgDb).
+### Anotación
+Vamos a usar los genes diferencialmente expresados del trabajo [*The regulatory landscape of retinoblastoma: a pathway analysis perspective*](https://doi.org/10.6084/m9.figshare.c.5975228), por lo que usaremos la anotación de humano "org.Hs.eg.db". Puedes ver las anotaciones disponibles [aquí](http://bioconductor.org/packages/release/BiocViews.html#___OrgDb).
 
 ```r
 #BiocManager::install("org.Hs.eg.db", character.only = TRUE)
 library("org.Hs.eg.db", character.only = TRUE)
 ```
 
-### Prepare Input
+### Preparar entrada
 
 ```r
 # Lectura de la tabla de genes diferencialemente expresados
@@ -85,16 +85,16 @@ genes <- na.omit(genes)
 genes <- names(genes)[abs(genes) > 2]
 ```
 
-### Create enrichGO object
+### Crear objeto enrichGO
 
 Parámetros:  
   
 **Ontology** opciones: "BP", "MF" o "CC"  
 **keyType** Esta puede variar depepndiendo de la anotación (gene ids). Por ejemplo para *"org.Hs.eg.db"*, las opciones son:   
   
-"ACCNUM"       "ALIAS"        "ENSEMBL"      "ENSEMBLPROT"  "ENSEMBLTRANS" "ENTREZID"     "ENZYME"       "EVIDENCE"     "EVIDENCEALL"  "GENENAME"     "GENETYPE"     "GO"
-"GOALL"        "IPI"          "MAP"          "OMIM"         "ONTOLOGY"     "ONTOLOGYALL"  "PATH"         "PFAM"         "PMID"         "PROSITE"      "REFSEQ"       "SYMBOL"
-"UCSCKG"       "UNIPROT"
+<p style='text-align: justify;'> "ACCNUM"       "ALIAS"        "ENSEMBL"      "ENSEMBLPROT"  "ENSEMBLTRANS" "ENTREZID"     "ENZYME"       "EVIDENCE"     "EVIDENCEALL" </p>
+<p style='text-align: justify;'> "GENENAME" "GENETYPE" "GO" "GOALL"        "IPI"          "MAP"          "OMIM"         "ONTOLOGY"     "ONTOLOGYALL" </p>
+<p style='text-align: justify;'> "PATH"         "PFAM"         "PMID"         "PROSITE"      "REFSEQ"       "SYMBOL" "UCSCKG"       "UNIPROT" </p>
   
 Puedes checar las opciones de la anotación de tu organismo usando la función `keytypes`, por ejemplo `keytypes(org.Hs.eg.db)`. 
 
