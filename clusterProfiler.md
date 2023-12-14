@@ -473,8 +473,17 @@ hsa <- pathview(gene.data=gene_list, pathway.id="hsa05322", species = "hsa", gen
 Las imágenes se salvan en su directorio de trabajo.
 
 
-Más información sobre clusterProfiler en su sitio web https://bioconductor.org/packages/release/bioc/vignettes/clusterProfiler/inst/doc/clusterProfiler.html
+### Más recursos:
+
+### Sobre clusterProfiler 
+
+Sitio web: https://bioconductor.org/packages/release/bioc/vignettes/clusterProfiler/inst/doc/clusterProfiler.html
+
+Tutorial: https://alexslemonade.github.io/refinebio-examples/03-rnaseq/pathway-analysis_rnaseq_01_ora.html
+
+### Sobre enriquecimiento
+
+artículo "Pathway size matters: the influence of pathway granularity on over-representation (enrichment analysis) statistics" https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-021-07502-8
 
 
-
-
+Tutorial "Functional Analysis for RNA-seq" https://hbctraining.github.io/DGE_workshop_salmon_online/lessons/10_FA_over-representation_analysis.html
