@@ -1,7 +1,8 @@
 # Introducción a clusterProfiler
 ## Viernes de Bioinformática
 ## Instituto Nacional de Medicina Genómica
-
+### Hugo Tovar hatovar@inmegen.gob.mx 
+### Genómica Computacional
 Este material:
 # https://github.com/hachepunto/VBI_clusterProfiler
 
