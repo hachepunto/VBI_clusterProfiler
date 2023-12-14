@@ -38,7 +38,6 @@ https://maayanlab.cloud/Enrichr/
 ### Instalar y cargar paquetes
 ```r
 #BiocManager::install("clusterProfiler")
-#BiocManager::install("pathview")
 library(clusterProfiler)
 library(tidyverse)
 ```
@@ -87,7 +86,7 @@ genes <- names(genes)[abs(genes) > 2]
 
 ### Crear objeto enrichGO
 
-Parámetros:  
+Parámetros:
   
 **Ontology** opciones: "BP", "MF" o "CC"  
 **keyType** Esta puede variar depepndiendo de la anotación (gene ids). Por ejemplo para *"org.Hs.eg.db"*, las opciones son:   
@@ -98,7 +97,7 @@ Parámetros:
   
 Puedes checar las opciones de la anotación de tu organismo usando la función `keytypes`, por ejemplo `keytypes(org.Hs.eg.db)`. 
 
-#### Create the object
+#### Creación del objeto `enrichResult`
 
 ```r
 go_enrich <- enrichGO(gene = genes,
@@ -144,65 +143,114 @@ dotplot(go_enrich)
 
 ## KEGG *Over-representation analysis*
 
-For KEGG pathway enrichment using the `gseKEGG()` function, we need to convert id types. We can use the `bitr` function for this (included in clusterProfiler). It is normal for this call to produce some messages / warnings. 
+Si queremos enriquecer patways de **KEGG** necesitamos convertir los ids para poder usar la función `gseKEGG()`. Para ello podemos usar la función `bitr` que está incluida el `clusterProfiler`. Es normal que algunos mensajes y warnings salgan al usar esta función. 
 
-In the `bitr` function, the param `fromType` should be the same as `keyType` from the `gseGO` function above (the annotation source). This param is used again in the next two steps: creating `dedup_ids` and `df2`.  
+En la función `bitr`, el parámetro `fromType` debe ser el tipo de `keyType` del de la función `gseGO` que vimos anteriormente (la fuente original). Este parámetro es usado dos veces más la crear los `dedup_ids` y el `degs2`.  
 
-`toType` in the `bitr` function has to be one of the available options from `keyTypes(org.Dm.eg.db)` and must map to one of 'kegg', 'ncbi-geneid', 'ncib-proteinid' or 'uniprot' because `gseKEGG()` only accepts one of these 4 options as it's `keytype` parameter. In the case of org.Dm.eg.db, none of those 4 types are available, but 'ENTREZID' are the same as ncbi-geneid for org.Dm.eg.db so we use this for `toType`. 
+El otro parámetro `toType` en la función `bitr` también debe ser otra de las anitaciones disponibles el `keyTypes("org.Hs.eg.db")` y debe mapear a alguna de 'kegg', 'ncbi-geneid', 'ncbi-proteinid' o 'uniprot' porque la función `gseKEGG()` solo acepta alguna de estas 4 opciones como entrara en el parámetro `keytype`. En el caso de org.Hs.eg.db usaremos 'ENTREZID' para `toType`, ya que este se corresponde con el ncbi-geneid y tiene mejor match con 'ENSEMBL', pero podríamos también usar 'UNIPROT'. 
 
-As our intial input, we use `original_gene_list` which we created above.
+Como nuestra entrada inicial usaremos nuestra `original_gene_list` que creamos para el enriquecimiento en GO.
 
 ## Prepare Data
-```{r}
-# Convert gene IDs for enrichKEGG function
-# We will lose some genes here because not all IDs will be converted
-ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "ENTREZID", OrgDb="org.Dm.eg.db")
 
-# remove duplicate IDS (here I use "ENSEMBL", but it should be whatever was selected as keyType)
+```r
+# Convertimos los gene IDs para la función enrichKEGG
+# Podría ser que perdamos algunos genes aquí dado que algunas conversiones no son compatibles
+ids<-bitr(names(original_gene_list), fromType = "ENSEMBL", toType = "ENTREZID", OrgDb="org.Hs.eg.db")
+
+# Removemos IDS duplicados (aquí se usa "ENSEMBL", pero debería de ser lo que hayamos usado como keyType)
 dedup_ids = ids[!duplicated(ids[c("ENSEMBL")]),]
 
-# Create a new dataframe df2 which has only the genes which were successfully mapped using the bitr function above
-df2 = df[df$X %in% dedup_ids$ENSEMBL,]
+# Creamos un nuevo dataframe df2 el cual solo tiene genes que se an convertido exitosamente usando la función bitr
 
-# Create a new column in df2 with the corresponding ENTREZ IDs
-df2$Y = dedup_ids$ENTREZID
+degs2 = degs[degs$ESGN %in% dedup_ids$ENSEMBL,]
 
-# Create a vector of the gene unuiverse
-kegg_gene_list <- df2$log2FoldChange
+# Creamos una nueva columna en degs2 con los ENTREZ ids correspondientes
+degs2$Y = dedup_ids$ENTREZID
 
-# Name vector with ENTREZ ids
-names(kegg_gene_list) <- df2$Y
+# Creamos un vector de genes del universo
+kegg_gene_list <- degs2$logFC
 
-# omit any NA values 
+# Nombramos el vector con los ENTREZ ids
+names(kegg_gene_list) <- degs2$Y
+
+# Verificamos que no haya NAs 
 kegg_gene_list<-na.omit(kegg_gene_list)
 
-# sort the list in decreasing order (required for clusterProfiler)
+# Ordenamos la lista en orden decreciente (requerido por for clusterProfiler)
 kegg_gene_list = sort(kegg_gene_list, decreasing = TRUE)
 
-# Exctract significant results from df2
-kegg_sig_genes_df = subset(df2, padj < 0.05)
+# Extraemos los resultados significativos del degs2
+kegg_sig_genes_degs = subset(degs2, adj.P.Val < 0.05)
 
-# From significant results, we want to filter on log2fold change
-kegg_genes <- kegg_sig_genes_df$log2FoldChange
+# También filtraremos por log2fold change
+kegg_genes <- kegg_sig_genes_degs$logFC
 
-# Name the vector with the CONVERTED ID!
-names(kegg_genes) <- kegg_sig_genes_df$Y
+# Nombramos el vector con los IDs convertidos
+names(kegg_genes) <- kegg_sig_genes_degs$Y
 
-# omit NA values
+# eliminanmos NAs
 kegg_genes <- na.omit(kegg_genes)
 
-# filter on log2fold change (PARAMETER)
+# Y ahora si filtramos por log2fold change
 kegg_genes <- names(kegg_genes)[abs(kegg_genes) > 2]
 
 ```
-## Create enrichKEGG object
-**organism** KEGG Organism Code: The full list is here: https://www.genome.jp/kegg/catalog/org_list.html (need the 3 letter code). I define this as `kegg_organism` first, because it is used again below when making the pathview plots.  
+## Creamos el objeto `enrichKEGG`
+
+Parámetros:
+
+**organism** código KEGG del organismo: La lista completa está aquí: https://www.genome.jp/kegg/catalog/org_list.html (se necesita el código de 3 letras). En el caso del humano es "hsa"  
 **keyType** one of 'kegg', 'ncbi-geneid', 'ncib-proteinid' or 'uniprot'.  
-```{r echo=TRUE}
-kegg_organism = "dme"
-kk <- enrichKEGG(gene=kegg_genes, universe=names(kegg_gene_list),organism=kegg_organism, pvalueCutoff = 0.05, keyType = "ncbi-geneid")
+
+```r
+kk <- enrichKEGG(gene=kegg_genes, 
+                universe=names(kegg_gene_list),
+                organism="hsa",
+                pvalueCutoff = 0.05, 
+                keyType = "ncbi-geneid")
 head(kk)
 ```
+
+### Barplot
+```r
+barplot(kk, 
+        showCategory = 10, 
+        title = "Enriched Pathways",
+        font.size = 8)
+```
+
+### Dotplot
+```r
+dotplot(kk, 
+        showCategory = 10, 
+        title = "Enriched Pathways",
+        font.size = 8)
+```
+
+## Pathview
+
+Con este paquete se puede visualizar nuestros genes en las vías de KEGG generando una imagen PNG y un PDF *diferente*.  
+  
+Parámetros:
+
+**gene.data** Esta es la lista `gene_list` creada arriba, el tipo de ids tiene que coincidir con el de `gene.idtype`
+**pathway.id** Tenemos que elegir aquí nosotros alguna. Como la idea es visualizar nuestras vías significativamente enriquecidas, pordemos usar los ids de los pathways que nos sale en `head(kk)`.  
+**species** El id de `organism` de la función `enrichKEGG`, en este caso "hsa"
+**gene.idtype** el tipo de ids utilizados en `gene.data` pero sacado del objeto `gene.idtype.list`. En este caso tomamos el tercer elemento de esta lista.
+
+```r
+#BiocManager::install("pathview")
+library(pathview)
+
+# Produce the native KEGG plot (PNG)
+hsa <- pathview(gene.data=gene_list, pathway.id="hsa04740", species = "hsa", gene.idtype=gene.idtype.list[3])
+
+# Produce a different plot (PDF) (not displayed here)
+hsa <- pathview(gene.data=gene_list, pathway.id="hsa04744", species = "hsa", gene.idtype=gene.idtype.list[3], kegg.native = FALSE)
+```
+
+Las imágenes se salvan en su directorio de trabajo.
 
 
 [^1]: Para más detalles ver: [Gómez-Romero, *et al.* (**2021**) "Bioinformatics of Functional Categories Enrichment" in *Bioinformatics and Human Genomics Research* eBook ISBN: 9781003005926](https://www.taylorfrancis.com/chapters/edit/10.1201/9781003005926-14/bioinformatics-functional-categories-enrichment-laura-g%C3%B3mez-romero-hugo-tovar-enrique-hern%C3%A1ndez-lemus).
