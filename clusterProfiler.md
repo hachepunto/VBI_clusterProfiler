@@ -32,4 +32,4 @@ https://maayanlab.cloud/Enrichr/
 
 
 
-[^1] Para más detalles ver [Gómez-Romero, et al. (2021) Bioinformatics of Functional Categories Enrichment in *Bioinformatics and Human Genomics Research* eBook ISBN: 9781003005926]("https://www.taylorfrancis.com/chapters/edit/10.1201/9781003005926-14/bioinformatics-functional-categories-enrichment-laura-g%C3%B3mez-romero-hugo-tovar-enrique-hern%C3%A1ndez-lemus").
+[^1]: Para más detalles ver: [Gómez-Romero, *et al.* (**2021**) "Bioinformatics of Functional Categories Enrichment" in *Bioinformatics and Human Genomics Research* eBook ISBN: 9781003005926](https://www.taylorfrancis.com/chapters/edit/10.1201/9781003005926-14/bioinformatics-functional-categories-enrichment-laura-g%C3%B3mez-romero-hugo-tovar-enrique-hern%C3%A1ndez-lemus).
