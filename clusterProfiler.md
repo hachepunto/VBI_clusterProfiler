@@ -18,7 +18,7 @@ Si bien hay varios métodos para hacer enriquecimiento[^1], los dós métodos m�
 ## *Over-representation analysis*
 
 
-![ORA](https://hbctraining.github.io/DGE_workshop_salmon_online/img/go_proportions.png "Over-representation analysis")
+![ORA](images/go_proportions.png "Over-representation analysis")
 
 ## *Gene Set Enrichment Analysis*
 
