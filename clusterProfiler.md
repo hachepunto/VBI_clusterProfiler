@@ -303,10 +303,15 @@ gene_list = sort(gene_list, decreasing = TRUE)
 Parámetros:
 
 **keyType** Igual que en el ORA, el tipo de ids utilizados en nuestra lista. Receurden que los tipos permitidos se enlistan con el comado `keytypes("org.Hs.eg.db")`. Recueden que si usan algo distinto a Humano deben cambiar su anotación.   
+
 **ont** Ontología. Alguno de "BP" (procesos biológicos), "MF" (función molecular), "CC" (componente celular) o "ALL" (todas)  
+
 **minGSSize** tamaño mínimo de geneSet para analizar.   
+
 **maxGSSize** tamaño máximo de genes anotados para probar. 
+
 **pvalueCutoff** punto de corte del p-value.   
+
 **pAdjustMethod** metodo para ajustar la p, puede ser uno de estos: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none" 
 
 
@@ -321,7 +326,7 @@ gse <- gseGO(geneList=gene_list,
              OrgDb = "org.Hs.eg.db", 
              pAdjustMethod = "BH")
 ```
-Noten que hemos dado toda la lista de genes con su valor de lofFC. Estás enriqueciendo sin un criterio arbitrario (elegido por nosotros), **puro dato duro y maduro**.
+Noten que hemos dado toda la lista de genes con su valor de lofFC. Estás enriqueciendo sin un criterio arbitrario (elegido por nosotros) _Data driven_.
 
 ## Outputs
 
